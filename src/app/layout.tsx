@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/nav/navbar";
 import BgStyles from "../components/ui/layout-background/BgStyles";
+import WalletConnectionProvider from "../components/solana-wallet/wallet-connection-provider";
+import { NetworkProvider } from "../context/network.context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,16 +28,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          {children}
-          <BgStyles />
-        </div>
-      </body>
-    </html>
+    <NetworkProvider>
+      <WalletConnectionProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              {children}
+              <BgStyles />
+            </div>
+          </body>
+        </html>
+      </WalletConnectionProvider>
+    </NetworkProvider>
   );
 }
