@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,40 @@ import {
 import { useNetwork } from "../../context/network.context";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 
-const WalletNetworkButton = () => {
+interface WalletNetworkProps {
+  className?: string;
+}
+
+// SVG for Down and Up Arrow
+const DownArrow = () => (
+  <svg
+    width="10"
+    height="10"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+const UpArrow = () => (
+  <svg
+    width="10"
+    height="10"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path d="M18 15l-6-6-6 6" />
+  </svg>
+);
+
+const WalletNetworkButton = ({ className }: WalletNetworkProps) => {
   const { network, setNetwork } = useNetwork();
+  const [isOpen, setIsOpen] = useState(false);
 
   const networkList = [
     WalletAdapterNetwork.Devnet,
@@ -22,8 +54,17 @@ const WalletNetworkButton = () => {
   ];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="uppercase">{network}</DropdownMenuTrigger>
+    <DropdownMenu onOpenChange={(props) => setIsOpen(!isOpen)} open={isOpen}>
+      <DropdownMenuTrigger
+        className={`uppercase ${className} select-none flex items-center`}
+      >
+        {network}
+        <span
+          className={`v-arrow transition-transform duration-300 ml-3 ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        />
+      </DropdownMenuTrigger>
       <DropdownMenuContent className="uppercase">
         <DropdownMenuLabel>Select Network</DropdownMenuLabel>
         <DropdownMenuSeparator />

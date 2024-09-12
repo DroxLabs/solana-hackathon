@@ -20,6 +20,23 @@
     --foreground: #ededed;
   }
 }
+.v-arrow {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-right: 3px solid gray;
+  border-bottom: 3px solid gray;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(225deg);
+}
+
+.rotate-0 {
+  transform: rotate(45deg);
+}
 
 body {
   color: var(--foreground);

@@ -15,6 +15,7 @@ import {
 
 import "@solana/wallet-adapter-react-ui/styles.css"; // Optional, for wallet UI styling
 import { useNetwork } from "../../context/network.context";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 
 const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   children,
@@ -31,7 +32,7 @@ const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        {children}
+        <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );

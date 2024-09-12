@@ -27,6 +27,8 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          network: "rgba(10, 43, 65, 0.5)",
+          wallet: "rgba(15, 92, 119, 1)",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

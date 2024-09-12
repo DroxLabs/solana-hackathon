@@ -5,6 +5,8 @@ import Navbar from "@/components/nav/navbar";
 import BgStyles from "../components/ui/layout-background/BgStyles";
 import WalletConnectionProvider from "../components/solana-wallet/wallet-connection-provider";
 import { NetworkProvider } from "../context/network.context";
+import "@solana/wallet-adapter-react-ui/styles.css"; // Default styles for the modal
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
