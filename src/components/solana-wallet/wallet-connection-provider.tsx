@@ -20,7 +20,6 @@ const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { network } = useNetwork();
-  console.log("network:", network);
 
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 

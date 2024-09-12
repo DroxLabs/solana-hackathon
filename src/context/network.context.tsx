@@ -8,18 +8,17 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { NETWORK_ENUM } from "../constant/network";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 
-type NetworkType = NETWORK_ENUM | null;
 interface NetworkContextType {
-  network: NETWORK_ENUM;
-  setNetwork: () => void;
+  network: WalletAdapterNetwork;
+  setNetwork: (network: WalletAdapterNetwork) => void;
   resetNetwork: () => void;
 }
 
 const defaultValue: NetworkContextType = {
-  network: NETWORK_ENUM.devnet,
-  setNetwork: () => void {},
+  network: WalletAdapterNetwork.Devnet,
+  setNetwork: (network: WalletAdapterNetwork) => {},
   resetNetwork: () => void {},
 };
 
@@ -30,22 +29,31 @@ interface Props {
 }
 
 export const NetworkProvider: React.FC<Props> = ({ children }) => {
-  const [network, setNetwork] = useState<NetworkType>(null);
+  const [network, setNetwork] = useState<WalletAdapterNetwork | null>(null);
 
-  const persistedNetwork = useMemo(
-    () => localStorage.getItem("network"),
-    []
-  ) as NetworkType;
+  const isClient = useMemo(() => typeof window !== "undefined", []);
+
+  const persistedNetwork = useMemo(() => {
+    if (isClient) {
+      const storedNetwork = localStorage.getItem("network");
+      return storedNetwork
+        ? (storedNetwork as WalletAdapterNetwork)
+        : WalletAdapterNetwork.Testnet;
+    }
+    return null;
+  }, [isClient]) as WalletAdapterNetwork;
 
   useEffect(() => {
     setNetwork(persistedNetwork);
   }, [persistedNetwork]);
 
   useEffect(() => {
-    savePersitedNetwork(network);
+    if (network) {
+      savePersitedNetwork(network);
+    }
   }, [network]);
 
-  const savePersitedNetwork = (network?: NetworkType) => {
+  const savePersitedNetwork = (network?: WalletAdapterNetwork) => {
     if (network) localStorage.setItem("network", network);
   };
 
@@ -56,8 +64,8 @@ export const NetworkProvider: React.FC<Props> = ({ children }) => {
   return (
     <NetworkContext.Provider
       value={{
-        network: network ?? NETWORK_ENUM.devnet,
-        setNetwork: () => {},
+        network: network ?? WalletAdapterNetwork.Devnet,
+        setNetwork,
         resetNetwork: resetNetwork,
       }}
     >
