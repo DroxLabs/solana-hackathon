@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import BorderWrapper from "../ui/button/border-wrapper";
 
 export type ButtonProps = PropsWithChildren<{
   className?: string;
@@ -70,28 +71,31 @@ export function WalletButton({ children, labels, ...props }: Props) {
   return (
     <div className="wallet-adapter-dropdown">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          {...props}
-          onClick={() => {
-            switch (buttonState) {
-              case "no-wallet":
-                setModalVisible(true);
-                break;
-              case "has-wallet":
-                if (onConnect) {
-                  onConnect();
-                }
-                break;
-              case "connected":
-                break;
-            }
-          }}
-        >
-          {content}
-        </DropdownMenuTrigger>
+        <BorderWrapper>
+          <DropdownMenuTrigger
+            {...props}
+            onClick={() => {
+              switch (buttonState) {
+                case "no-wallet":
+                  setModalVisible(true);
+                  break;
+                case "has-wallet":
+                  if (onConnect) {
+                    onConnect();
+                  }
+                  break;
+                case "connected":
+                  break;
+              }
+            }}
+          >
+            {content}
+          </DropdownMenuTrigger>
+        </BorderWrapper>
+
         {buttonState !== "no-wallet" && (
           <DropdownMenuContent className="uppercase text-gray-800">
-            <DropdownMenuLabel>Select Network</DropdownMenuLabel>
+            <DropdownMenuLabel>Wallet Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {publicKey ? (
               <DropdownMenuItem

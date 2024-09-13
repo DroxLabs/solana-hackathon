@@ -13,6 +13,7 @@ import {
 } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletButton } from "../solana-wallet/wallet-button";
+import Link from "next/link";
 
 const Navbar = () => {
   const { wallet, connect, connecting, connected } = useWallet();
@@ -33,7 +34,9 @@ const Navbar = () => {
   return (
     <nav className="flex flex-row justify-between px-10 py-5 text-white p-4 sticky top-0 z-10">
       <div className="flex flex-row gap-10 items-center">
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
         <NavMenu />
       </div>
       <div className="flex flex-row gap-10 items-center">

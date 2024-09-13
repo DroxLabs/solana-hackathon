@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNetwork } from "../../context/network.context";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import BorderWrapper from "../ui/button/border-wrapper";
 
 interface WalletNetworkProps {
   className?: string;
@@ -55,16 +56,23 @@ const WalletNetworkButton = ({ className }: WalletNetworkProps) => {
 
   return (
     <DropdownMenu onOpenChange={(props) => setIsOpen(!isOpen)} open={isOpen}>
-      <DropdownMenuTrigger
-        className={`uppercase ${className} select-none flex items-center`}
+      <BorderWrapper
+        outerColorClass="bg-[rgb(10,62,80)]"
+        innerColorClass="bg-[rgb(10,62,80)]"
+        borderColorClass="border-[rgb(10,62,80)]"
       >
-        {network}
-        <span
-          className={`v-arrow transition-transform duration-300 ml-3 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
-        />
-      </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          className={`uppercase ${className} select-none flex items-center`}
+        >
+          {network}
+          <span
+            className={`v-arrow transition-transform duration-300 ml-3 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            }`}
+          />
+        </DropdownMenuTrigger>
+      </BorderWrapper>
+
       <DropdownMenuContent className="uppercase">
         <DropdownMenuLabel>Select Network</DropdownMenuLabel>
         <DropdownMenuSeparator />
