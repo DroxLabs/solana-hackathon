@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+## Things to resolve before working on script
+### Pass Your Own Keypair
+
+To use your own keypair, read the JSON file containing the keypair and parse it like this:
+-For finding path to keypair type  $solana config get on your terminal
+```typescript
+const keypair = JSON.parse(Fs.readFileSync("/path/to/your/keypair.json").toString()) as number[];
+```
+### Pass the mint address
+-User will pass his own mintaddress here before batching
+```typescript
+    let mint = new PublicKey("")
+```
+
+### Decinal of mint address
+-Check the decimal of mint address of user  and replace it by 9
+```typescript
+ let decimals =9
+ ```
