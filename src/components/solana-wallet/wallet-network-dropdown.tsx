@@ -57,9 +57,9 @@ const WalletNetworkButton = ({ className }: WalletNetworkProps) => {
   return (
     <DropdownMenu onOpenChange={(props) => setIsOpen(!isOpen)} open={isOpen}>
       <BorderWrapper
-        outerColorClass="bg-[rgb(10,62,80)]"
-        innerColorClass="bg-[rgb(10,62,80)]"
-        borderColorClass="border-[rgb(10,62,80)]"
+        outerColorClass="bg-[rgb(10,62,80)] hidden lg:block"
+        innerColorClass="bg-[rgb(10,62,80)] hidden lg:block"
+        borderColorClass="border-[rgb(10,62,80)] hidden lg:block"
       >
         <DropdownMenuTrigger
           className={`uppercase ${className} select-none flex items-center`}

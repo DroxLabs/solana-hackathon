@@ -48,7 +48,7 @@ const NavMenu = () => {
   return (
     <div className="bg-nav-gradient p-4 rounded-xl uppercase">
       <NavigationMenu>
-        <NavigationMenuList>
+        <NavigationMenuList className="flex lg:flex-row flex-col lg:items-center lg:justify-center ">
           {menuItems.map((menu) => (
             <NavigationMenuItem key={menu.label}>
               {menu.subItems ? (
