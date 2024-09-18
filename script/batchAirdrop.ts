@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-import { Keypair, Connection, SystemProgram, Transaction } from "@solana/web3.js";
+import { Keypair, Connection, SystemProgram, Transaction } from  "@solana/web3.js";
 import * as Fs from 'fs';
 import bs58 from "bs58";
 import * as Web3 from "@solana/web3.js";
@@ -105,7 +105,10 @@ async function main() {
     
     // let [mint,ownerata] =  await createMint(connection,supply,decimals,false,false);//make to prevent from freeze and mintAuthority make these true
     let mint = new PublicKey("J3AijY43ro4kbuSq6b7hgELGBbD8xvtptD4JjmxDmMm8")
-    let decimals =9
+    const mintInfo = await  spl.getMint(connection,mint);
+
+    console.log("Mint decimal",mintInfo.decimals);
+    let decimals =mintInfo.decimals;
     console.log("mint address ",mint.toBase58());
    let ownerata =  await getATAForMint(connection,keypair.publicKey,mint);
 
@@ -131,7 +134,7 @@ instruction22 = userATAs22.map((userATA,index)=>{
         ownerata,
         userATA,
         keypair.publicKey,
-        1*(10**decimals),//Muqeet bro here you have to be on call with me to discuss
+        1*(10**decimals),//Replace 1 by user's quantities defined
         [],
         spl.TOKEN_PROGRAM_ID
      )
