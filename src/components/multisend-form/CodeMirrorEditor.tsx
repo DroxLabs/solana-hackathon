@@ -14,7 +14,7 @@ const CodeMirrorEditor: React.FC = () => {
   return (
     <BorderWrapper>
       <CodeMirror
-        value={value}
+        // value={value}
         height="200px"
         className="text-xl w-full"
         theme="dark"
