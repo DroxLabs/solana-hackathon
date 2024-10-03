@@ -3,11 +3,11 @@
 import gsap from "gsap";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
-import { breakTheText } from "@/utils";
 import { useRef, useState } from "react";
 import showToast from "@/utils/show-toast";
 import { useMediaQuery } from "react-responsive";
 import { Section } from "@/components/templates";
+import { breakTheText, ensurePublicKey } from "@/utils";
 import {
   ButtonSize,
   CONNECTION,
@@ -55,7 +55,7 @@ export default function SectionUnlockTokens() {
 
     setUnlockTokenFields((prev) => ({
       ...prev,
-      [name]: name === "mintAddress" ? new PublicKey(value) : value,
+      [name]: name === "mintAddress" ? ensurePublicKey(value) : value,
     }));
   };
 
@@ -72,6 +72,7 @@ export default function SectionUnlockTokens() {
 
     if (
       !unlockTokenFields.mintAddress ||
+      !(unlockTokenFields.mintAddress instanceof PublicKey) ||
       !PublicKey.isOnCurve(unlockTokenFields.mintAddress.toBytes())
     ) {
       errors.push("Invalid mint address.");

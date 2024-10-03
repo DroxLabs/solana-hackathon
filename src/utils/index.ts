@@ -174,3 +174,11 @@ export const breakTheText = (ref: HTMLElement) => {
     ref.innerHTML = clutter;
   }
 };
+
+export const ensurePublicKey = (value: string) => {
+  try {
+    return new PublicKey(value);
+  } catch {
+    return value;
+  }
+};
