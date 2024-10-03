@@ -15,33 +15,33 @@ import Link from "next/link";
 
 const menuItems = [
   {
-    label: "Products",
-    link: "/products",
+    label: "Vesting",
+    link: "/",
     subItems: [
       {
-        label: "Product A",
+        label: "Unlock Tokens",
         description: "Description about product A",
-        link: "/products/a",
+        link: "/unlock-tokens",
       },
       {
-        label: "Product B",
+        label: "Lock Tokens",
         description: "Description about product A",
-        link: "/products/B",
+        link: "/lock-tokens",
       },
     ],
   },
   {
     label: "Multisend",
-    link: "/multisend",
+    link: "/",
   },
-  {
-    label: "verification",
-    link: "/verification",
-  },
-  {
-    label: "faq",
-    link: "/faq",
-  },
+  // {
+  //   label: "verification",
+  //   link: "/verification",
+  // },
+  // {
+  //   label: "faq",
+  //   link: "/faq",
+  // },
 ];
 
 const NavMenu = () => {

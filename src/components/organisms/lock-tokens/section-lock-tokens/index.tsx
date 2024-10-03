@@ -6,7 +6,6 @@ import { useGSAP } from "@gsap/react";
 import { useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import showToast from "@/utils/show-toast";
-import { FaCalendarAlt } from "react-icons/fa";
 import Button from "@/components/atoms/button";
 import { useMediaQuery } from "react-responsive";
 import { Section } from "@/components/templates";
@@ -29,6 +28,18 @@ import INPUT_RIGHT_ICON from "@/assets/icons/input-right-vector.webp";
 import GLOWING_VECTORS_ICON from "@/assets/icons/glowing-vectors.webp";
 import LOCK_BTN_LEFT_ICON from "@/assets/icons/lock-btn-left-icon.webp";
 import LOCK_BTN_RIGHT_ICON from "@/assets/icons/lock-btn-right-icon.webp";
+
+const CalendarIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="white"
+    viewBox="0 0 24 24"
+    width="24px"
+    height="24px"
+  >
+    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM19 20H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z" />
+  </svg>
+);
 
 export default function SectionLockTokens() {
   /* MEDIA QUERIES */
@@ -122,6 +133,7 @@ export default function SectionLockTokens() {
 
     const { value } =
       (await CONNECTION.getParsedAccountInfo(
+        // @ts-ignore
         lockTokenFields.mintAddress,
         "confirmed"
       )) || {};
@@ -133,6 +145,7 @@ export default function SectionLockTokens() {
 
     const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
       CONNECTION,
+      // @ts-ignore
       publicKey,
       lockTokenFields.mintAddress,
       publicKey
@@ -140,6 +153,7 @@ export default function SectionLockTokens() {
 
     const destinationTokenAccount = await getOrCreateAssociatedTokenAccount(
       CONNECTION,
+      // @ts-ignore
       publicKey,
       lockTokenFields.mintAddress,
       new PublicKey(lockTokenFields.destinationAddress)
@@ -161,7 +175,7 @@ export default function SectionLockTokens() {
     }
 
     const parsed = tokenInfo.value.data.parsed;
-
+    // @ts-ignore
     if (parsed.info.mint !== lockTokenFields.mintAddress.toBase58()) {
       showToast("error", "Mint mismatch");
       return;
@@ -184,6 +198,7 @@ export default function SectionLockTokens() {
         /** Don't forget to add decimals */
         new Numberu64(
           lockTokenFields.amount *
+            // @ts-ignore
             Math.pow(10, value?.data?.parsed?.info?.decimals)
         )
       );
@@ -199,6 +214,7 @@ export default function SectionLockTokens() {
       publicKey,
       sourceTokenAccount.address,
       destinationTokenAccount.address,
+      // @ts-ignore
       lockTokenFields.mintAddress,
       [schedule]
     );
@@ -339,7 +355,7 @@ export default function SectionLockTokens() {
             placeholderText="Vesting Schedule (Date)"
             className="__input__ bg-transparent text-[0.75rem] font-secondary leading-[1rem] w-full h-full outline-none caret-gray-400"
           />
-          <FaCalendarAlt className="text-gray-400" />
+          <CalendarIcon />
         </div>
         <Image
           src={INPUT_RIGHT_ICON}

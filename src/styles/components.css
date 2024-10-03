@@ -1,0 +1,64 @@
+/*=============================================
+*                   Headings                   *
+=============================================*/
+.heading-h1 {
+  font-size: calc(36px + (64 - 36) * ((100vw - 320px) / (1460 - 320)));
+  @apply font-primary text-52 font-bold leading-normal tracking-tight xxl:text-64;
+}
+.heading-h2 {
+  @apply font-primary text-44 font-bold leading-normal tracking-tight;
+}
+.heading-h3 {
+  @apply font-primary text-36 font-bold leading-normal;
+}
+.heading-h4 {
+  @apply font-primary text-30 font-bold leading-normal;
+}
+.heading-h5 {
+  @apply font-primary text-26 font-bold leading-normal;
+}
+.heading-h6 {
+  @apply font-primary text-22 font-bold leading-normal;
+}
+
+.from-blue-to-lightblue {
+  @apply bg-blue-to-lightblue;
+}
+
+/*=============================================
+*                   Body Text                  *
+=============================================*/
+.body-text-l {
+  @apply text-white font-secondary text-[20px] font-normal leading-130;
+}
+.body-text-m {
+  @apply text-white font-secondary text-[18px] font-normal leading-130;
+}
+.body-text-s {
+  @apply text-white font-secondary text-[17px] font-normal leading-130;
+}
+.body-text-xs {
+  @apply text-white font-secondary text-[16px] font-normal leading-130;
+}
+.body-text-xxs {
+  @apply text-white font-secondary text-[14px] font-normal leading-130;
+}
+
+/*=============================================
+*                   Button Text                  *
+=============================================*/
+.btn-text-l {
+  @apply text-white font-secondary text-[20px] font-normal leading-130;
+}
+.btn-text-m {
+  @apply text-white font-secondary text-[18px] font-normal leading-130;
+}
+.btn-text-s {
+  @apply text-white font-secondary text-[17px] font-normal leading-130;
+}
+.btn-text-xs {
+  @apply text-white font-secondary text-[16px] font-normal leading-130;
+}
+.btn-text-xxs {
+  @apply text-white font-secondary text-[14px] font-normal leading-130;
+}

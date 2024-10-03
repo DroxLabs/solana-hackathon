@@ -189,6 +189,12 @@ export default function SectionUnlockTokens() {
         title="Unlock Tokens"
         className="uppercase text-center text-transparent bg-clip-text font-bold from-blue-to-lightblue text-shadow mt-[33.5px]"
       />
+      {/* <span
+        ref={unlockTokensTitle}
+        className="uppercase text-center text-transparent bg-clip-text font-bold from-blue-to-lightblue text-shadow mt-[33.5px]"
+      >
+        Unlock Tokens
+      </span> */}
 
       <Input
         name="mintAddress"

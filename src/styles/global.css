@@ -1,0 +1,52 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/*=============================================
+*                   Container                   *
+=============================================*/
+.container {
+  @apply w-full lg:max-w-[1500px] lg:px-56;
+}
+
+@media (max-width: 2000px) {
+  .container {
+    max-width: none !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+}
+
+/*=============================================
+*                   Global                   *
+=============================================*/
+.text-shadow {
+  text-shadow: 4px 4px 30px rgba(216, 243, 253, 0.2);
+}
+
+.glowing-vector {
+  fill: #0f5c77;
+  opacity: 0.75;
+  filter: blur(229.16665649414062px);
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+  }
+}
+
+.__header__ .wallet-adapter-button {
+  @apply bg-[#0F5C77] text-white font-secondary text-[16px] font-[600];
+}
+
+/**
+* NOTE: REACT DATE PICKER BUTTON STYLING
+* react-datepicker button 
+*/
+.react-datepicker-wrapper {
+  @apply w-[95%] h-full pl-2 pb-1;
+}

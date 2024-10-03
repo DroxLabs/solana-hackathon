@@ -1,0 +1,10 @@
+/* Tailwind styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@import "./base.css";
+@import "./fonts.css";
+@import "./global.css";
+@import "./components.css";
