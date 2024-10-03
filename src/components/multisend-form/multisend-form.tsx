@@ -27,6 +27,14 @@ import CodeMirror from "@uiw/react-codemirror";
 import { RecipientAddressType, TokenTypeEnum } from "./type";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import useBatchTx from "../../services/use-batch-tx";
+import { useModal } from "../../context/modal.context";
+import { AlertDialogFooter, AlertDialogHeader } from "../ui/alert-dialog";
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@radix-ui/react-alert-dialog";
 
 interface Props {
   tokenAddress: string;
@@ -44,6 +52,7 @@ const MultisendForm = () => {
     tokenType: null,
   });
   const { connected, publicKey } = useWallet();
+  const { openModal, closeModal } = useModal();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   console.log("MultisendForm  formData:", formData);
@@ -54,64 +63,81 @@ const MultisendForm = () => {
     setFormData({ ...formData, [key]: value });
   };
 
+  const ModalBody = (modalData: string) => {
+    return (
+      <>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-gray-400">
+            Are you absolutely sure?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-200">
+            {modalData}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={closeModal}>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </>
+    );
+  };
+
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      //       const { errors, recipients } = parseAddresses(
-      //         `${Keypair.generate().publicKey.toBase58()}, 1
-      // ${Keypair.generate().publicKey.toBase58()}, 2
-      // ${Keypair.generate().publicKey.toBase58()}, 1.5
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},0112312312312
-      // ${Keypair.generate().publicKey.toBase58()},123123123`
-      //       );
 
       const { errors, recipients } = parseAddresses(
         formData.recipientAddressString
       );
 
       if (errors.length > 0) {
-        alert(errors[0]);
-        throw errors[0];
-      }
-      if (!isValidAccountAddress(formData.tokenAddress)) {
-        alert("Invalid token address");
-        throw errors[0];
-      }
-      const decimals = await getTokenDecimal(formData.tokenAddress, connection);
-      if (!decimals) {
-        alert("Invalid token address");
+        openModal({ modalType: "Error", modalNodeData: ModalBody(errors[0]) });
         throw errors[0];
       }
 
-      await createAndTransferBatch({
-        recipients,
-        mintAddress: formData.tokenAddress,
-      });
+      if (!isValidAccountAddress(formData.tokenAddress)) {
+        openModal({
+          modalType: "Error",
+          modalNodeData: ModalBody("Invalid token address"),
+        });
+
+        throw errors[0];
+      }
+
+      const decimals = await getTokenDecimal(formData.tokenAddress, connection);
+
+      if (!decimals) {
+        openModal({
+          modalType: "Error",
+          modalNodeData: ModalBody("Invalid token address"),
+        });
+
+        throw errors[0];
+      }
+      // openModal("confirm-transfer", {
+      //   tokenAddress: formData.tokenAddress,
+      //   recipientAddresses: formData.recipientAddresses,
+      //   recipientAddressString: formData.recipientAddressString,
+      //   tokenType: formData.tokenType,
+      // });
+      // await createAndTransferBatch({
+      //   recipients,
+      //   mintAddress: formData.tokenAddress,
+      // });
       console.log("handleSubmit  recipients:", recipients);
       setIsLoading(false);
     } catch (e) {
       setIsLoading(false);
     }
+  };
+
+  const handleConfirmTx = (
+    recipients: RecipientAddressType[],
+    mintAddress: string
+  ) => {
+    createAndTransferBatch({
+      recipients,
+      mintAddress,
+    });
   };
 
   const buttonText = isLoading ? "Proceeding..." : "Proceed";
@@ -180,7 +206,7 @@ FSCYWVmQxBv3GvP6XePyKuyVAvTpQr9q45hqqDW2KbRb, 1.5`}
         <BorderWrapper>
           <Button
             className="border-0 bg-[#0A3E50] hover:bg-primary-network rounded-none w-full py-6 text-xl font-bold"
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             disabled={isLoading}
           >
             {buttonText}

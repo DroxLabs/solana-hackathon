@@ -7,6 +7,7 @@ import WalletConnectionProvider from "../components/solana-wallet/wallet-connect
 import { NetworkProvider } from "../context/network.context";
 import "@solana/wallet-adapter-react-ui/styles.css"; // Default styles for the modal
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { ModalProvider } from "../context/modal.context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,11 +37,13 @@ export default function RootLayout({
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-              {children}
-              <BgStyles />
-            </div>
+            <ModalProvider>
+              <div className="min-h-screen flex flex-col">
+                <Navbar />
+                {children}
+                <BgStyles />
+              </div>
+            </ModalProvider>
           </body>
         </html>
       </WalletConnectionProvider>
