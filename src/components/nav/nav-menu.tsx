@@ -20,12 +20,12 @@ const menuItems = [
     subItems: [
       {
         label: "Unlock Tokens",
-        description: "Description about product A",
+        description: "Unlock tokens for Vesting",
         link: "/unlock-tokens",
       },
       {
         label: "Lock Tokens",
-        description: "Description about product A",
+        description: "Lock tokens for Vesting",
         link: "/lock-tokens",
       },
     ],

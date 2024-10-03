@@ -182,7 +182,7 @@ export default function SectionHomeHero() {
         </div>
       </div>
 
-      <Image
+      {/* <Image
         src={GLOWING_VECTORS_ICON}
         alt=""
         className="w-[600px] absolute left-0 top-[7%] translate-x-[-50%]"
@@ -198,7 +198,7 @@ export default function SectionHomeHero() {
         style={{
           zIndex: -1,
         }}
-      />
+      /> */}
     </Section>
   );
 }
