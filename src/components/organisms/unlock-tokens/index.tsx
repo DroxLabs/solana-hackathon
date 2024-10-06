@@ -139,7 +139,12 @@ export default function SectionUnlockTokens() {
       showToast("success", "Tokens unlocked");
       showToast("info", "Check your destination wallet");
     } catch (error) {
+      console.log(error);
       showToast("error", "Error while unlocking the tokens");
+      showToast(
+        "error",
+        "You can't unlock the tokens now, vesting schedule maynot be completed yet."
+      );
     }
 
     return instruction;
