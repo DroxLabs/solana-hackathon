@@ -61,7 +61,7 @@ const MultisendForm = () => {
   const [recipientAddressesErrorText, setRecipientAddressesErrorText] =
     useState<Array<string>>([]);
 
-  console.log("MultisendForm  formData:", formData);
+  const [tokenTypeErrorText, setTokenTypeErrorText] = useState("");
 
   const { createAndTransferBatch } = useBatchTx();
 
@@ -71,6 +71,7 @@ const MultisendForm = () => {
 
   useEffect(() => {
     setTokenAddressErrorText("");
+    setTokenTypeErrorText("");
     setRecipientAddressesErrorText([]);
   }, [formData]);
   const ModalBody = (modalData: string) => {
@@ -94,29 +95,38 @@ const MultisendForm = () => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      if (formData.tokenType == null) {
+        setTokenTypeErrorText("Please select a token type");
+        throw "Please select a token type";
+      }
 
       const { errors, recipients } = parseAddresses(
         formData.recipientAddressString
       );
 
-      if (!isValidAccountAddress(formData.tokenAddress)) {
-        // openModal({
-        //   modalType: "Error",
-        //   modalNodeData: ModalBody("Invalid token address"),
-        // });
-        setTokenAddressErrorText("Invalid token address");
-        throw errors[0];
-      }
-      const decimals = await getTokenDecimal(formData.tokenAddress, connection);
+      if (formData.tokenType == TokenTypeEnum.SPL) {
+        if (!isValidAccountAddress(formData.tokenAddress)) {
+          // openModal({
+          //   modalType: "Error",
+          //   modalNodeData: ModalBody("Invalid token address"),
+          // });
+          setTokenAddressErrorText("Invalid token address");
+          throw errors[0];
+        }
+        const decimals = await getTokenDecimal(
+          formData.tokenAddress,
+          connection
+        );
 
-      if (!decimals) {
-        // openModal({
-        //   modalType: "Error",
-        //   modalNodeData: ModalBody("Invalid token address"),
-        // });
-        setTokenAddressErrorText("Invalid token address");
+        if (!decimals) {
+          // openModal({
+          //   modalType: "Error",
+          //   modalNodeData: ModalBody("Invalid token address"),
+          // });
+          setTokenAddressErrorText("Invalid token address");
 
-        throw errors[0];
+          throw errors[0];
+        }
       }
 
       if (errors.length > 0) {
@@ -175,8 +185,22 @@ const MultisendForm = () => {
             <SelectItem value={TokenTypeEnum.SPL}>SPL Token</SelectItem>
           </SelectContent>
         </Select>
+        <div
+          className={`text-red-400 text-md transition-all duration-500 ease-in-out transform ${
+            !!tokenTypeErrorText ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          {tokenTypeErrorText}
+        </div>
       </div>
-      <div>
+
+      <div
+        className={`transition-all duration-500 ease-in-out transform ${
+          formData.tokenType == TokenTypeEnum.SPL
+            ? "max-h-96 opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+      >
         <Label htmlFor="text" className="text-lg font-bold">
           Token Address
         </Label>
@@ -189,10 +213,17 @@ const MultisendForm = () => {
             className="border-0 rounded-none text-xl"
           />
         </BorderWrapper>
-        {!!tokenAddressErrorText && (
-          <div className="text-red-400 text-md">{tokenAddressErrorText}</div>
-        )}
+        <div
+          className={`text-red-400 text-md transition-all duration-500 ease-in-out transform ${
+            !!tokenAddressErrorText
+              ? "max-h-20 opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          {tokenAddressErrorText}
+        </div>
       </div>
+
       <div className=" min-h-[200px] max-w-[950px]">
         <Label htmlFor="text" className="text-lg font-bold">
           List Of addresses in CSV
@@ -216,13 +247,17 @@ FSCYWVmQxBv3GvP6XePyKuyVAvTpQr9q45hqqDW2KbRb, 1.5`}
             }}
           />
         </BorderWrapper>
-        {recipientAddressesErrorText.length > 0 && (
-          <>
-            {recipientAddressesErrorText.slice(0, 5).map((value: string) => (
-              <div className="text-red-400 text-md">{value}</div>
-            ))}
-          </>
-        )}
+        <div
+          className={`text-red-400 text-md transition-all duration-500 ease-in-out transform ${
+            recipientAddressesErrorText.length > 0
+              ? "max-h-96 opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          {recipientAddressesErrorText.slice(0, 5).map((value: string) => (
+            <div>{value}</div>
+          ))}
+        </div>
       </div>
       <div className="w-2/4 self-center">
         <BorderWrapper>
