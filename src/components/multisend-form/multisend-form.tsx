@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   WalletAdapterNetwork,
@@ -55,6 +55,12 @@ const MultisendForm = () => {
   const { openModal, closeModal } = useModal();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [tokenAddressErrorText, setTokenAddressErrorText] = useState("");
+
+  const [recipientAddressesErrorText, setRecipientAddressesErrorText] =
+    useState<Array<string>>([]);
+
   console.log("MultisendForm  formData:", formData);
 
   const { createAndTransferBatch } = useBatchTx();
@@ -63,6 +69,10 @@ const MultisendForm = () => {
     setFormData({ ...formData, [key]: value });
   };
 
+  useEffect(() => {
+    setTokenAddressErrorText("");
+    setRecipientAddressesErrorText([]);
+  }, [formData]);
   const ModalBody = (modalData: string) => {
     return (
       <>
@@ -89,30 +99,32 @@ const MultisendForm = () => {
         formData.recipientAddressString
       );
 
-      if (errors.length > 0) {
-        openModal({ modalType: "Error", modalNodeData: ModalBody(errors[0]) });
-        throw errors[0];
-      }
-
       if (!isValidAccountAddress(formData.tokenAddress)) {
-        openModal({
-          modalType: "Error",
-          modalNodeData: ModalBody("Invalid token address"),
-        });
-
+        // openModal({
+        //   modalType: "Error",
+        //   modalNodeData: ModalBody("Invalid token address"),
+        // });
+        setTokenAddressErrorText("Invalid token address");
         throw errors[0];
       }
-
       const decimals = await getTokenDecimal(formData.tokenAddress, connection);
 
       if (!decimals) {
-        openModal({
-          modalType: "Error",
-          modalNodeData: ModalBody("Invalid token address"),
-        });
+        // openModal({
+        //   modalType: "Error",
+        //   modalNodeData: ModalBody("Invalid token address"),
+        // });
+        setTokenAddressErrorText("Invalid token address");
 
         throw errors[0];
       }
+
+      if (errors.length > 0) {
+        // openModal({ modalType: "Error", modalNodeData: ModalBody(errors[0]) });
+        setRecipientAddressesErrorText(errors);
+        throw errors[0];
+      }
+
       // openModal("confirm-transfer", {
       //   tokenAddress: formData.tokenAddress,
       //   recipientAddresses: formData.recipientAddresses,
@@ -177,6 +189,9 @@ const MultisendForm = () => {
             className="border-0 rounded-none text-xl"
           />
         </BorderWrapper>
+        {!!tokenAddressErrorText && (
+          <div className="text-red-400 text-md">{tokenAddressErrorText}</div>
+        )}
       </div>
       <div className=" min-h-[200px] max-w-[950px]">
         <Label htmlFor="text" className="text-lg font-bold">
@@ -201,6 +216,13 @@ FSCYWVmQxBv3GvP6XePyKuyVAvTpQr9q45hqqDW2KbRb, 1.5`}
             }}
           />
         </BorderWrapper>
+        {recipientAddressesErrorText.length > 0 && (
+          <>
+            {recipientAddressesErrorText.slice(0, 5).map((value: string) => (
+              <div className="text-red-400 text-md">{value}</div>
+            ))}
+          </>
+        )}
       </div>
       <div className="w-2/4 self-center">
         <BorderWrapper>
