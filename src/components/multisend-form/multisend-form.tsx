@@ -141,10 +141,11 @@ const MultisendForm = () => {
       //   recipientAddressString: formData.recipientAddressString,
       //   tokenType: formData.tokenType,
       // });
-      // await createAndTransferBatch({
-      //   recipients,
-      //   mintAddress: formData.tokenAddress,
-      // });
+      await createAndTransferBatch({
+        recipients,
+        mintAddress: formData.tokenAddress,
+        tokenType: formData.tokenType,
+      });
       console.log("handleSubmit  recipients:", recipients);
       setIsLoading(false);
     } catch (e) {

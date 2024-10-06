@@ -2,7 +2,10 @@ import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
 import React, { useCallback } from "react";
-import { RecipientAddressType } from "../components/multisend-form/type";
+import {
+  RecipientAddressType,
+  TokenTypeEnum,
+} from "../components/multisend-form/type";
 import * as Web3 from "@solana/web3.js";
 import * as spl from "@solana/spl-token";
 import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
@@ -96,38 +99,53 @@ const useBatchTx = () => {
     async ({
       recipients,
       mintAddress,
+      tokenType = TokenTypeEnum.SOL,
     }: {
       recipients: RecipientAddressType[];
       mintAddress: string;
+      tokenType?: TokenTypeEnum;
     }) => {
       if (!connected || !publicKey || !signTransaction) {
         throw new WalletNotConnectedError();
       }
 
-      const mint = new PublicKey(mintAddress);
-
       try {
+        let instructions: Array<TransactionInstruction> = [];
         // Fetch mint information
-        const mintInfo = await spl.getMint(connection, mint);
-        const decimals = mintInfo.decimals;
-        const ownerATA = await spl.getAssociatedTokenAddress(
-          mint,
-          publicKey,
-          false,
-          spl.TOKEN_PROGRAM_ID,
-          spl.ASSOCIATED_TOKEN_PROGRAM_ID
-        );
+        if (tokenType !== TokenTypeEnum.SOL) {
+          const mint = new PublicKey(mintAddress);
 
-        // Get combined ATA creation and transfer instructions for all recipients
-        const { instructions } = await findOrCreateATAAndTransfer({
-          recipients, // The array of recipients
-          mint,
-          ownerATA,
-          decimals,
-          publicKey,
-        });
+          // Fetch mint information
+          const mintInfo = await spl.getMint(connection, mint);
+          const decimals = mintInfo.decimals;
+          const ownerATA = await spl.getAssociatedTokenAddress(
+            mint,
+            publicKey,
+            false,
+            spl.TOKEN_PROGRAM_ID,
+            spl.ASSOCIATED_TOKEN_PROGRAM_ID
+          );
 
-        console.log("instructionBatches", instructions);
+          // Get combined ATA creation and transfer instructions for all recipients
+          const result = await findOrCreateATAAndTransfer({
+            recipients,
+            mint,
+            ownerATA,
+            decimals,
+            publicKey,
+          });
+          instructions = result.instructions;
+        } else {
+          // If transferring SOL tokens
+          recipients.forEach((recipient) => {
+            const transferInstruction = anchor.web3.SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: new PublicKey(recipient.address),
+              lamports: +recipient.amount, // Amount of SOL in lamports
+            });
+            instructions.push(transferInstruction);
+          });
+        }
 
         const { blockhash, lastValidBlockHeight } =
           await connection.getLatestBlockhash();
@@ -137,11 +155,7 @@ const useBatchTx = () => {
           blockhash
         );
         // const instructionBatches = chunkArray(instructions, 22);
-        console.log(
-          "useBatchTx  instructionBatches:",
-          instructionBatches,
-          instructionBatches.length
-        );
+
         const txDetails = [];
         for (const batch of instructionBatches) {
           // Create a new transaction with the batch of instructions
@@ -173,10 +187,6 @@ const useBatchTx = () => {
           // Confirm the transaction
           //   await connection.confirmTransaction(signature, "confirmed");
           txDetails.push({ signature, blockhash });
-          console.log(
-            `Transaction Transferred tokens to all recipients, signature: ${signature} and blockhash: ${blockhash}`,
-            txDetails
-          );
         }
         return txDetails;
       } catch (error) {
