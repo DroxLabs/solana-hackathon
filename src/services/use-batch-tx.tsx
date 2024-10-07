@@ -1,14 +1,12 @@
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import {
   RecipientAddressType,
   TokenTypeEnum,
 } from "../components/multisend-form/type";
-import * as Web3 from "@solana/web3.js";
 import * as spl from "@solana/spl-token";
-import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import * as anchor from "@coral-xyz/anchor";
 import { batchInstructionsBySize } from "../utils/solana-util";
 
