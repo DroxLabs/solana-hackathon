@@ -13,7 +13,7 @@ import { Title, Input } from "@/components/atoms";
 import { CopyIcon } from "@/components/svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import { PublicKey, Transaction } from "@solana/web3.js";
-import { breakTheText, Numberu64, Schedule } from "@/utils";
+import { breakTheText, ensurePublicKey, Numberu64, Schedule } from "@/utils";
 import {
   ButtonSize,
   CONNECTION,
@@ -25,12 +25,12 @@ import { create, generateRandomSeed } from "@/utils/vest";
 import INPUT_LEFT_ICON from "@/assets/icons/input-left-vector.webp";
 import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import INPUT_RIGHT_ICON from "@/assets/icons/input-right-vector.webp";
-import GLOWING_VECTORS_ICON from "@/assets/icons/glowing-vectors.webp";
 import LOCK_BTN_LEFT_ICON from "@/assets/icons/lock-btn-left-icon.webp";
 import LOCK_BTN_RIGHT_ICON from "@/assets/icons/lock-btn-right-icon.webp";
 
 const CalendarIcon = () => (
   <svg
+    className="w-[17px] h-[17px] cursor-pointer"
     xmlns="http://www.w3.org/2000/svg"
     fill="white"
     viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ export default function SectionLockTokens() {
         name === "amount"
           ? Number(value)
           : name === "mintAddress"
-          ? new PublicKey(value)
+          ? ensurePublicKey(value)
           : value,
     }));
   };
@@ -97,6 +97,7 @@ export default function SectionLockTokens() {
 
     if (
       !lockTokenFields.mintAddress ||
+      !(lockTokenFields.mintAddress instanceof PublicKey) ||
       !PublicKey.isOnCurve(lockTokenFields.mintAddress.toBytes())
     ) {
       errors.push("Invalid mint address.");
@@ -109,8 +110,8 @@ export default function SectionLockTokens() {
     }
 
     if (
-      lockTokenFields.vestingScheduleDate &&
-      lockTokenFields.vestingScheduleDate.getTime() <= Date.now()
+      isNaN(lockTokenFields.vestingScheduleDate?.getTime()) ||
+      lockTokenFields.vestingScheduleDate?.getTime() <= Date.now()
     ) {
       errors.push("Vesting schedule date must be in the future.");
     }
