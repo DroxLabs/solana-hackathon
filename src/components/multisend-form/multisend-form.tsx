@@ -86,7 +86,7 @@ const MultisendForm = () => {
             Total Transactions: {modalData.totalTransactions}
           </AlertDialogDescription>
           <AlertDialogDescription className="text-gray-200">
-            Total Recipients: {`${modalData.recipients}`}
+            Total Recipients: {`${modalData.recipients?.length}`}
           </AlertDialogDescription>
           <AlertDialogDescription className="text-gray-200">
             Total Token Amount: {`${modalData.totalAmount}`}
@@ -94,18 +94,18 @@ const MultisendForm = () => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={closeModal}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={async () => {
+              await createAndTransferBatch({
+                recipients: modalData.recipients,
+                mintAddress: formData.tokenAddress,
+                tokenType: formData.tokenType,
+              });
+            }}
+          >
+            Confirm
+          </AlertDialogAction>
         </AlertDialogFooter>
-        <AlertDialogAction
-          onClick={async () => {
-            await createAndTransferBatch({
-              recipients: modalData.recipients,
-              mintAddress: formData.tokenAddress,
-              tokenType: formData.tokenType,
-            });
-          }}
-        >
-          Confirm
-        </AlertDialogAction>
       </>
     );
   };
