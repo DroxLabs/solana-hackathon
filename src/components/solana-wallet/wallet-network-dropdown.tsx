@@ -17,33 +17,6 @@ interface WalletNetworkProps {
   className?: string;
 }
 
-// SVG for Down and Up Arrow
-const DownArrow = () => (
-  <svg
-    width="10"
-    height="10"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
-
-const UpArrow = () => (
-  <svg
-    width="10"
-    height="10"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path d="M18 15l-6-6-6 6" />
-  </svg>
-);
-
 const WalletNetworkButton = ({ className }: WalletNetworkProps) => {
   const { network, setNetwork } = useNetwork();
   const [isOpen, setIsOpen] = useState(false);
@@ -55,7 +28,7 @@ const WalletNetworkButton = ({ className }: WalletNetworkProps) => {
   ];
 
   return (
-    <DropdownMenu onOpenChange={(props) => setIsOpen(!isOpen)} open={isOpen}>
+    <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)} open={isOpen}>
       <BorderWrapper
         outerColorClass="bg-[rgb(10,62,80)] hidden lg:block"
         innerColorClass="bg-[rgb(10,62,80)] hidden lg:block"

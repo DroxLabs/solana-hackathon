@@ -9,7 +9,6 @@ import Button from "@/components/atoms/button";
 import { Section } from "@/components/templates";
 import { Text, Title } from "@/components/atoms";
 import { ButtonSize, TextSize, TitleSize } from "@/constants";
-import GLOWING_VECTORS_ICON from "@/assets/icons/glowing-vectors.webp";
 import LOCK_BTN_LEFT_ICON from "@/assets/icons/lock-btn-left-icon.webp";
 import TOKEN_VESTING_LOGO from "@/assets/logos/token-vesting-logo.webp";
 import LOCK_BTN_RIGHT_ICON from "@/assets/icons/lock-btn-right-icon.webp";

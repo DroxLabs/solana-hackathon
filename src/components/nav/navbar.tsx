@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NavMenu from "./nav-menu";
 import Logo from "@/components/ui/logo-ui/logo";
 import WalletNetworkButton from "../solana-wallet/wallet-network-dropdown";

@@ -5,8 +5,6 @@ import React, {
   Fragment,
   ReactNode,
   useContext,
-  useEffect,
-  useMemo,
   useState,
 } from "react";
 import Modal from "../components/modal/modal";

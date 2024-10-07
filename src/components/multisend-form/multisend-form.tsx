@@ -53,7 +53,6 @@ const MultisendForm = () => {
     recipientAddressString: "",
     tokenType: null,
   });
-  const { connected, publicKey } = useWallet();
   const { openModal, closeModal } = useModal();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -173,16 +172,6 @@ const MultisendForm = () => {
     }
   };
 
-  const handleConfirmTx = (
-    recipients: RecipientAddressType[],
-    mintAddress: string
-  ) => {
-    createAndTransferBatch({
-      recipients,
-      mintAddress,
-    });
-  };
-
   const buttonText = isLoading ? "Proceeding..." : "Proceed";
   return (
     <div className="flex flex-col gap-8 ">
@@ -274,9 +263,11 @@ FSCYWVmQxBv3GvP6XePyKuyVAvTpQr9q45hqqDW2KbRb, 1.5`}
               : "max-h-0 opacity-0"
           }`}
         >
-          {recipientAddressesErrorText.slice(0, 5).map((value: string) => (
-            <div>{value}</div>
-          ))}
+          {recipientAddressesErrorText
+            .slice(0, 5)
+            .map((value: string, index: number) => (
+              <div key={index}>{value}</div>
+            ))}
         </div>
       </div>
       <div className="w-2/4 self-center">

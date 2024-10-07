@@ -3,7 +3,7 @@ import { useModal } from "../../context/modal.context";
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 
 const Modal = () => {
-  const { isOpen, closeModal, modalData } = useModal();
+  const { isOpen, modalData } = useModal();
 
   const { modalNodeData } = modalData;
   return (
