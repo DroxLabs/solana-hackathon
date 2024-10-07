@@ -1,3 +1,4 @@
+"use client";
 import { NETWORK } from "@/constants";
 import { ReactNode, useMemo } from "react";
 import { clusterApiUrl } from "@solana/web3.js";

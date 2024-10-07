@@ -1,7 +1,11 @@
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { useCallback } from "react";
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import { useCallback, useState } from "react";
 import {
   RecipientAddressType,
   TokenTypeEnum,
@@ -9,10 +13,22 @@ import {
 import * as spl from "@solana/spl-token";
 import * as anchor from "@coral-xyz/anchor";
 import { batchInstructionsBySize } from "../utils/solana-util";
+import { useModal } from "../context/modal.context";
+import {
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "../components/ui/alert-dialog";
+import {
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@radix-ui/react-alert-dialog";
 
 const useBatchTx = () => {
   const { publicKey, connected, signTransaction } = useWallet();
   const { connection } = useConnection();
+  const { closeModal, openModal } = useModal();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Dummy Data for demonstration
   //   const DUMMY_MINT_ADDRESS = "J3AijY43ro4kbuSq6b7hgELGBbD8xvtptD4JjmxDmMm8";
@@ -24,6 +40,48 @@ const useBatchTx = () => {
   //     { address: "RecipientAddress2", amount: "0.5" },
   //     { address: "RecipientAddress3", amount: "2" },
   //   ];
+
+  const ModalBody = (
+    modalData: Array<{ signature: string; blockhash: string }>
+  ) => {
+    const copySignature = (signature: string) => {
+      navigator.clipboard.writeText(signature).then(
+        () => {
+          alert("Signature copied to clipboard!");
+        },
+        (err) => {
+          console.error("Failed to copy text: ", err);
+        }
+      );
+    };
+
+    return (
+      <>
+        <AlertDialogHeader
+          className="overflow-hidden"
+          style={{ overflow: "auto !important" }}
+        >
+          <AlertDialogTitle className="text-gray-400">
+            Review Transactions
+          </AlertDialogTitle>
+          {modalData.map((item, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <AlertDialogDescription className="text-gray-200 h-full truncate w-fit">
+                Signature: {item.signature}
+              </AlertDialogDescription>
+              <button onClick={() => copySignature(item.signature)}>
+                Copy
+              </button>
+            </div>
+          ))}
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={closeModal}>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </>
+    );
+  };
 
   const findOrCreateATAAndTransfer = async ({
     recipients,
@@ -43,7 +101,7 @@ const useBatchTx = () => {
 
     for (const recipient of recipients) {
       const userPublicKey = new PublicKey(recipient.address);
-      const amountToTransfer = parseFloat(recipient.amount) * 10 ** decimals; // Convert amount to the correct format based on decimals
+      const amountToTransfer = Number(recipient.amount) * 10 ** decimals; // Convert amount to the correct format based on decimals
 
       // Get the recipient's associated token address (ATA)
       const userATA = await spl.getAssociatedTokenAddress(
@@ -104,6 +162,8 @@ const useBatchTx = () => {
       }
 
       try {
+        setIsLoading(true);
+        closeModal();
         let instructions: Array<TransactionInstruction> = [];
         // Fetch mint information
         if (tokenType !== TokenTypeEnum.SOL) {
@@ -135,7 +195,7 @@ const useBatchTx = () => {
             const transferInstruction = anchor.web3.SystemProgram.transfer({
               fromPubkey: publicKey,
               toPubkey: new PublicKey(recipient.address),
-              lamports: +recipient.amount, // Amount of SOL in lamports
+              lamports: Number(recipient.amount) * LAMPORTS_PER_SOL, // Amount of SOL in lamports
             });
             instructions.push(transferInstruction);
           });
@@ -181,15 +241,23 @@ const useBatchTx = () => {
           //   await connection.confirmTransaction(signature, "confirmed");
           txDetails.push({ signature, blockhash });
         }
+
+        openModal({
+          modalType: "TransactionDetails",
+          modalNodeData: ModalBody(txDetails),
+        });
+        setIsLoading(false);
+
         return txDetails;
       } catch (error) {
+        setIsLoading(false);
         console.error("Transaction failed: instructionBatches", error);
       }
     },
     [publicKey, connected, signTransaction, connection]
   );
 
-  return { createAndTransferBatch, findOrCreateATAAndTransfer };
+  return { createAndTransferBatch, findOrCreateATAAndTransfer, isLoading };
 };
 
 export default useBatchTx;

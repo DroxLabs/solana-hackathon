@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -64,7 +64,7 @@ const MultisendForm = () => {
 
   const [tokenTypeErrorText, setTokenTypeErrorText] = useState("");
 
-  const { createAndTransferBatch } = useBatchTx();
+  const { createAndTransferBatch, isLoading: batchTxLoading } = useBatchTx();
 
   const handleValueChange = (key: keyof Props, value: string) => {
     setFormData({ ...formData, [key]: value });
@@ -75,6 +75,7 @@ const MultisendForm = () => {
     setTokenTypeErrorText("");
     setRecipientAddressesErrorText([]);
   }, [formData]);
+
   const ModalBody = (modalData: ConfirmModal) => {
     return (
       <>
@@ -95,6 +96,7 @@ const MultisendForm = () => {
         <AlertDialogFooter>
           <AlertDialogCancel onClick={closeModal}>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            disabled={isLoading}
             onClick={async () => {
               await createAndTransferBatch({
                 recipients: modalData.recipients,
@@ -103,7 +105,7 @@ const MultisendForm = () => {
               });
             }}
           >
-            Confirm
+            {isLoading ? "Confirming..." : "Confirm"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </>
@@ -172,7 +174,7 @@ const MultisendForm = () => {
     }
   };
 
-  const buttonText = isLoading ? "Proceeding..." : "Proceed";
+  const buttonText = isLoading || batchTxLoading ? "Proceeding..." : "Proceed";
   return (
     <div className="flex flex-col gap-8 ">
       <div>
@@ -275,7 +277,7 @@ FSCYWVmQxBv3GvP6XePyKuyVAvTpQr9q45hqqDW2KbRb, 1.5`}
           <Button
             className="border-0 bg-[#0A3E50] hover:bg-primary-network rounded-none w-full py-6 text-xl font-bold"
             onClick={() => handleSubmit()}
-            disabled={isLoading}
+            disabled={isLoading || batchTxLoading}
           >
             {buttonText}
           </Button>
