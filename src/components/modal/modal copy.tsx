@@ -1,10 +1,4 @@
-import {
-  Button,
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import React from "react";
 import { useModal } from "../../context/modal.context";
 

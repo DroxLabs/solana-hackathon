@@ -10,11 +10,7 @@ import * as Web3 from "@solana/web3.js";
 import * as spl from "@solana/spl-token";
 import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import * as anchor from "@coral-xyz/anchor";
-import {
-  batchInstructionsBySize,
-  chunkArray,
-  getTxSize,
-} from "../utils/solana-util";
+import { batchInstructionsBySize } from "../utils/solana-util";
 
 const useBatchTx = () => {
   const { publicKey, connected, signTransaction } = useWallet();
@@ -103,7 +99,7 @@ const useBatchTx = () => {
     }: {
       recipients: RecipientAddressType[];
       mintAddress: string;
-      tokenType?: TokenTypeEnum;
+      tokenType?: TokenTypeEnum | null;
     }) => {
       if (!connected || !publicKey || !signTransaction) {
         throw new WalletNotConnectedError();
@@ -151,8 +147,7 @@ const useBatchTx = () => {
           await connection.getLatestBlockhash();
         const instructionBatches = batchInstructionsBySize(
           instructions,
-          publicKey,
-          blockhash
+          publicKey
         );
         // const instructionBatches = chunkArray(instructions, 22);
 

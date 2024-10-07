@@ -1,11 +1,8 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  WalletAdapterNetwork,
-  WalletNotConnectedError,
-} from "@solana/wallet-adapter-base";
+
 import {
   Select,
   SelectContent,
@@ -13,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import CodeMirrorEditor from "./CodeMirrorEditor";
 import BorderWrapper from "../ui/button/border-wrapper";
 import { Input } from "@/components/ui/input";
 import { Label } from "../ui/label";
@@ -22,7 +18,6 @@ import {
   isValidAccountAddress,
   parseAddresses,
 } from "../../utils/solana-util";
-import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import CodeMirror from "@uiw/react-codemirror";
 import { RecipientAddressType, TokenTypeEnum } from "./type";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -36,12 +31,19 @@ import {
   AlertDialogTitle,
 } from "@radix-ui/react-alert-dialog";
 
+type TokenType = TokenTypeEnum | null;
 interface Props {
   tokenAddress: string;
   recipientAddresses: Array<RecipientAddressType>;
   recipientAddressString: string;
-  tokenType: TokenTypeEnum | null;
+  tokenType: TokenType;
 }
+
+type ConfirmModal = {
+  recipients: RecipientAddressType[];
+  totalTransactions: number;
+  totalAmount: number;
+};
 
 const MultisendForm = () => {
   const { connection } = useConnection();
@@ -74,20 +76,37 @@ const MultisendForm = () => {
     setTokenTypeErrorText("");
     setRecipientAddressesErrorText([]);
   }, [formData]);
-  const ModalBody = (modalData: string) => {
+  const ModalBody = (modalData: ConfirmModal) => {
     return (
       <>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-gray-400">
-            Are you absolutely sure?
+            Review Transactions{" "}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-200">
-            {modalData}
+            Total Transactions: {modalData.totalTransactions}
+          </AlertDialogDescription>
+          <AlertDialogDescription className="text-gray-200">
+            Total Recipients: {`${modalData.recipients}`}
+          </AlertDialogDescription>
+          <AlertDialogDescription className="text-gray-200">
+            Total Token Amount: {`${modalData.totalAmount}`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={closeModal}>Cancel</AlertDialogCancel>
         </AlertDialogFooter>
+        <AlertDialogAction
+          onClick={async () => {
+            await createAndTransferBatch({
+              recipients: modalData.recipients,
+              mintAddress: formData.tokenAddress,
+              tokenType: formData.tokenType,
+            });
+          }}
+        >
+          Confirm
+        </AlertDialogAction>
       </>
     );
   };
@@ -135,18 +154,19 @@ const MultisendForm = () => {
         throw errors[0];
       }
 
-      // openModal("confirm-transfer", {
-      //   tokenAddress: formData.tokenAddress,
-      //   recipientAddresses: formData.recipientAddresses,
-      //   recipientAddressString: formData.recipientAddressString,
-      //   tokenType: formData.tokenType,
-      // });
-      await createAndTransferBatch({
+      const txData = {
         recipients,
-        mintAddress: formData.tokenAddress,
-        tokenType: formData.tokenType,
+        totalTransactions: recipients.length,
+        totalAmount: recipients.reduce(
+          (acc, recipient) => +recipient.amount + acc,
+          0
+        ),
+      };
+      openModal({
+        modalType: "confirm-transfer",
+        modalNodeData: ModalBody(txData),
       });
-      console.log("handleSubmit  recipients:", recipients);
+
       setIsLoading(false);
     } catch (e) {
       setIsLoading(false);
@@ -229,7 +249,6 @@ const MultisendForm = () => {
         <Label htmlFor="text" className="text-lg font-bold">
           List Of addresses in CSV
         </Label>
-        {/* <CodeMirrorEditor /> */}
         <BorderWrapper>
           <CodeMirror
             placeholder={`Add addresses like
